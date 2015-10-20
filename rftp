@@ -17,7 +17,7 @@ source $CONFIG
 
 #Start ftp sync
 LOCKFILE="/tmp/rftp.lock"
-lockfile -r 0 $LOCKFILE || exit 0
+lockfile -r 0 $LOCKFILE 2>/dev/null || exit 0
 
 #Remove lockfile if lftp terminates unexpected
 trap "rm -f $LOCKFILE" SIGINT SIGTERM
