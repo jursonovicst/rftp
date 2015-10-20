@@ -1,0 +1,33 @@
+#!/bin/bash
+
+
+#Check prerequisites
+command -v lftp >/dev/null 2>&1 || { echo >&2 "I require lftp but it's not installed.  Aborting."; exit 1; }
+command -v lockfile >/dev/null 2>&1 || { echo >&2 "I require lockfile but it's not installed.  Aborting."; exit 1; }
+
+
+#Load config files
+CONFIG="$HOME/.rftp.conf"
+if [ ! -r $CONFIG ]; then
+  echo "Config file $CONFIG is missing!"
+  exit 1
+fi
+source $CONFIG
+
+
+#Start ftp sync
+LOCKFILE="/tmp/rftp.lock"
+lockfile -r 0 $LOCKFILE || exit 0
+
+#Remove lockfile if lftp terminates unexpected
+trap "rm -f $LOCKFILE" SIGINT SIGTERM
+
+lftp -u $login,$pass -p $port sftp://$host << EOF
+set mirror:use-pget-n 5
+set mirror:set-permissions false
+mirror --continue --parallel=2 --verbose=1 $remote_dir $local_dir
+quit
+EOF
+
+rm -f $LOCKFILE
+exit 0
