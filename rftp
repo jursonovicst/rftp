@@ -20,7 +20,7 @@ LOCKFILE="/tmp/rftp.lock"
 lockfile -r 0 $LOCKFILE 2>/dev/null || exit 0
 
 #Remove lockfile if lftp terminates unexpected
-trap "rm -f $LOCKFILE" SIGINT SIGTERM
+trap "echo 'ERROR: lftp interrupted'; rm -f $LOCKFILE; exit" SIGINT SIGTERM
 
 lftp -u $login,$pass -p $port sftp://$host << EOF
 set mirror:use-pget-n 5
