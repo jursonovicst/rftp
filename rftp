@@ -4,7 +4,7 @@
 #Check prerequisites
 command -v lftp >/dev/null 2>&1 || { echo >&2 "I require lftp but it's not installed.  Aborting."; exit 1; }
 command -v lockfile >/dev/null 2>&1 || { echo >&2 "I require lockfile but it's not installed.  Aborting."; exit 1; }
-
+#TODO: check perl dependency: libstring-crc32-perl String::CRC32
 
 #Load config files
 CONFIG="$HOME/.rftp.conf"
