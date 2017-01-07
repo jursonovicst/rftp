@@ -33,6 +33,7 @@ set mirror:parallel-directories true
 set mirror:set-permissions false
 
 set xfer:verify true
+set xfer:log true
 
 mirror --continue --verbose=1 $remote_dir $local_dir || echo "FAILED"
 quit
