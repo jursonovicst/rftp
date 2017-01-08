@@ -32,6 +32,7 @@ set mirror:parallel-transfer-count 2
 set mirror:parallel-directories true
 set mirror:set-permissions false
 
+set xfer:use-temp-file
 set xfer:verify true
 set xfer:log true
 
