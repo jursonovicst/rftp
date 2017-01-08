@@ -22,8 +22,8 @@ lockfile -r 0 $LOCKFILE 2>/dev/null || exit 0
 #Remove lockfile if lftp terminates unexpected
 trap "echo 'ERROR: lftp interrupted'; rm -f $LOCKFILE; exit 1" SIGINT SIGTERM
 
-#pass is set to xxx, use pubkey auth!
-lftp -u $login,xxx -p $port sftp://$host << EOF
+#pass is set to empty to use pubkey auth!
+lftp -u $login, -p $port sftp://$host << EOF
 set pget:default-n 5
 set pget:save-status 30
 
