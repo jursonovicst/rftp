@@ -36,7 +36,7 @@ set xfer:use-temp-file
 set xfer:verify true
 set xfer:log true
 
-mirror --continue --verbose=1 $remote_dir $local_dir || echo "FAILED"
+mirror --continue --verbose=1 --Remove-source-files $remote_dir $local_dir || echo "FAILED"
 quit
 EOF
 
