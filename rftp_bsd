@@ -1,0 +1,45 @@
+#!/bin/sh
+
+
+#Check prerequisites
+command -v lftp >/dev/null 2>&1 || { echo >&2 "I require lftp but it's not installed.  Aborting."; exit 1; }
+command -v lockf >/dev/null 2>&1 || { echo >&2 "I require lockf but it's not installed.  Aborting."; exit 1; }
+#TODO: check perl dependency: libstring-crc32-perl String::CRC32
+
+
+#Load config files
+CONFIG="$HOME/.rftp.conf"
+if [ ! -r $CONFIG ]; then
+  echo "Config file $CONFIG is missing!"
+  exit 1
+fi
+. $CONFIG
+
+
+#Start ftp sync
+LOCKFILE="/tmp/rftp.lock"
+lockf -k -s -t 8 $LOCKFILE echo 2>/dev/null || exit 0
+
+#Remove lockfile if lftp terminates unexpected
+trap "echo 'ERROR: lftp interrupted'; rm -f $LOCKFILE; exit 1" SIGINT SIGTERM
+
+#pass is set to empty to use pubkey auth!
+lftp -u $login, -p $port sftp://$host << EOF
+set pget:default-n 5
+set pget:save-status 30
+
+set mirror:use-pget-n 5
+set mirror:parallel-transfer-count 2
+set mirror:parallel-directories true
+set mirror:set-permissions false
+
+set xfer:use-temp-file
+set xfer:verify true
+set xfer:log true
+
+mirror --continue --verbose=1 --Remove-source-files $remote_dir $local_dir || echo "FAILED"
+quit
+EOF
+
+rm -f $LOCKFILE
+exit 0
