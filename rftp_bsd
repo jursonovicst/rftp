@@ -18,7 +18,8 @@ fi
 
 #Start ftp sync
 LOCKFILE="/tmp/rftp.lock"
-lockf -k -s -t 8 $LOCKFILE echo 2>/dev/null || exit 0
+trap 'rm -f "$LOCKFILE"; exit $?' INT TERM EXIT
+lockf -k -s -t 8 $LOCKFILE echo -n 2>/dev/null || exit 0
 
 #Remove lockfile if lftp terminates unexpected
 trap "echo 'ERROR: lftp interrupted'; rm -f $LOCKFILE; exit 1" SIGINT SIGTERM
