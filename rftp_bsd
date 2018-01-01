@@ -18,11 +18,14 @@ fi
 
 #Start ftp sync
 LOCKFILE="/tmp/rftp.lock"
-trap 'rm -f "$LOCKFILE"; exit $?' INT TERM EXIT
-lockf -k -s -t 8 $LOCKFILE echo -n 2>/dev/null || exit 0
+trap 'rm -f "$LOCKFILE"; exit $?' INT TERM
 
-#Remove lockfile if lftp terminates unexpected
-trap "echo 'ERROR: lftp interrupted'; rm -f $LOCKFILE; exit 1" SIGINT SIGTERM
+if [ -f $LOCKFILE ] ; then
+    exit 0
+fi
+
+touch $LOCKFILE
+
 
 #pass is set to empty to use pubkey auth!
 lftp -u $login, -p $port sftp://$host << EOF
