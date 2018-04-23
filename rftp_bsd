@@ -21,10 +21,12 @@ LOCKFILE="/tmp/rftp.lock"
 trap 'rm -f "$LOCKFILE"; exit $?' INT TERM
 
 if [ -f $LOCKFILE ] ; then
-    exit 0
+    PID=`cat $LOCKFILE`
+    kill -0 $PID 2>/dev/null && exit 0
 fi
 
-touch $LOCKFILE
+echo $$ >$LOCKFILE
+
 
 
 #pass is set to empty to use pubkey auth!
